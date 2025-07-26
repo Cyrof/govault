@@ -72,4 +72,4 @@ A usage guide will be displayed.
 ---
 
 ## License
-This project is licensed under the [Apache 2.0]().
+This project is licensed under the [Apache 2.0](https://github.com/Cyrof/govault/blob/main/LICENSE).
