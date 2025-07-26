@@ -12,5 +12,5 @@ func main() {
 	io := fileIO.NewFileIO()
 	store := vault.NewVault(io, crypto)
 
-	cli.Setup(store)
+	cli.Execute(store)
 }
