@@ -3,11 +3,11 @@ package vault
 
 // function to add secret
 func (v *Vault) AddSecret(key, value string) {
-	v.secrets[key] = value
+	v.Secrets[key] = value
 }
 
 // function to get secret
 func (v *Vault) GetSecret(key string) (string, bool) {
-	val, ok := v.secrets[key]
+	val, ok := v.Secrets[key]
 	return val, ok
 }

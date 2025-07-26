@@ -7,12 +7,10 @@ import (
 // function to save secrets
 func (v *Vault) Save() error {
 	// convert secrets to json
-	data, err := json.Marshal(v.secrets)
+	data, err := json.Marshal(v.Secrets)
 	if err != nil {
 		return err
 	}
 
-	// encryption should be here
-
-	return v.fileIO.WriteSecret(data)
+	return v.FileIO.WriteSecret(data)
 }
