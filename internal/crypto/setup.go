@@ -17,6 +17,7 @@ func (c *Crypto) SetupFromMeta(password string, storedSalt, storedHash []byte) e
 	if !VerifyHash(key, storedHash) {
 		return errors.New("Invalid Password")
 	}
+
 	c.Salt = storedSalt
 	c.Key = key
 	return nil
