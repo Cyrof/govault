@@ -44,6 +44,7 @@ func PromptPassword() (string, error) {
 	for {
 		fmt.Print("Enter your master password: ")
 		pass1, _ := reader.ReadString('\n')
+		pass1 = strings.TrimSpace(pass1)
 
 		if pass1 == "" {
 			fmt.Println("Password cannot be empty. Please try again.")

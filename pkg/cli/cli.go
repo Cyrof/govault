@@ -4,6 +4,7 @@ import (
 	// "flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/Cyrof/govault/internal/vault"
 )
@@ -22,6 +23,9 @@ func Setup(v *vault.Vault) {
 
 		// setup crypto salt and hash
 		v.Crypto.SetupFromMeta(password, []byte(metaData.Salt), []byte(metaData.Hash))
+		fmt.Println("Login successful.")
+		time.Sleep(1 * time.Second) // 1 second pause
+		ClearScreen()
 	} else {
 		// prompt welcome message
 		PrintWelcome()
@@ -36,6 +40,9 @@ func Setup(v *vault.Vault) {
 		metaData := v.Crypto.ToMeta()
 		v.FileIO.EnsureVaultDir()
 		v.FileIO.WriteMeta(metaData)
+		fmt.Println("Password created successfully.")
+		time.Sleep(1 * time.Second)
+		ClearScreen()
 	}
 }
 
