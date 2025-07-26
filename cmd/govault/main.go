@@ -1,28 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"github.com/Cyrof/govault/internal/crypto"
 	"github.com/Cyrof/govault/internal/fileIO"
+	"github.com/Cyrof/govault/internal/vault"
+	"github.com/Cyrof/govault/pkg/cli"
 )
 
 func main() {
+	crypto := crypto.NewCrypto()
 	io := fileIO.NewFileIO()
-	if io.CheckMetaFile() {
-		fmt.Println("Meta file exists")
-		data, err := io.ReadMeta()
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			fmt.Println(string(data))
-		}
-	} else {
-		io.EnsureVaultDir()
-		fmt.Println("Vault directory created!!")
+	store := vault.NewVault(io, crypto)
 
-		metaData := []byte(`{"salt":"abc123","hash":"xyz789"}`)
-		err := io.WriteMeta(metaData)
-		if err != nil {
-			fmt.Println("Failed to write meta:", err)
-		}
-	}
+	cli.Setup(store)
 }
