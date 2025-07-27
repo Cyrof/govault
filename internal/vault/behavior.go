@@ -2,6 +2,8 @@
 package vault
 
 import (
+	"fmt"
+
 	"github.com/Cyrof/govault/internal/model"
 )
 
@@ -18,4 +20,12 @@ func (v *Vault) AddSecret(key, value string) {
 func (v *Vault) GetSecret(key string) (model.Secret, bool) {
 	val, ok := v.Secrets[key]
 	return val, ok
+}
+
+// function to display all keys
+func (v *Vault) DisplayKeys() {
+	fmt.Println("Stored keys in the vault:")
+	for key := range v.Secrets {
+		fmt.Println(" -", key)
+	}
 }
