@@ -53,11 +53,8 @@ func Setup(v *vault.Vault) {
 }
 
 func Execute(v *vault.Vault) {
-	// main commands
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
-	purgeCmd := flag.NewFlagSet("purge", flag.ExitOnError)
-	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 
 	// sub args for add arg
 	addKey := addCmd.String("key", "", "Key to store")
@@ -88,21 +85,6 @@ func Execute(v *vault.Vault) {
 		} else {
 			fmt.Println("Error retrieving secret")
 		}
-	case "purge":
-		purgeCmd.Parse(os.Args[2:])
-		confirm := PromptPurge()
-		if confirm {
-			v.FileIO.PurgeVault()
-			fmt.Println("All vault data has been successfully purged. The system has been reset.")
-		} else {
-			fmt.Println("Purge operation cancelled. No changes were made.")
-			os.Exit(1)
-		}
-	case "list":
-		Setup(v)
-		listCmd.Parse(os.Args[2:])
-		v.DisplayKeys()
-		os.Exit(1)
 	default:
 		PrintUsage()
 		os.Exit(1)
@@ -111,25 +93,6 @@ func Execute(v *vault.Vault) {
 
 func PrintUsage() {
 	fmt.Println("Usage:")
-	// add key description
-	fmt.Println("	govault add -key <key> -value <value>")
-	fmt.Println("		Add a new secret to the vault.")
-
-	// get key description
-	fmt.Println("	\n\tgovault get -key <key>")
-	fmt.Println("		Retrieve a stored secreted from the vault by its key.")
-
-	// list all keys description
-	fmt.Println("	\n\tgovault list")
-	fmt.Println("		List all keys stored in value.")
-
-	// purge vault description
-	fmt.Println("	\n\tgovault purge")
-	fmt.Println("		Permanently delete all stored vault data and reset the application.")
-
-	// example description
-	fmt.Println("\nExample:")
-	fmt.Println("	govault add -key email -value myemailpassword")
-	fmt.Println("	govault get -key email")
-	fmt.Println("	govault purge")
+	fmt.Println(" govault add -key <key> -value <value>")
+	fmt.Println(" govault get -key <key>")
 }
