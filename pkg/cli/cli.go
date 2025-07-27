@@ -119,6 +119,10 @@ func PrintUsage() {
 	fmt.Println("	\n\tgovault get -key <key>")
 	fmt.Println("		Retrieve a stored secreted from the vault by its key.")
 
+	// list all keys description
+	fmt.Println("	\n\tgovault list")
+	fmt.Println("		List all keys stored in value.")
+
 	// purge vault description
 	fmt.Println("	\n\tgovault purge")
 	fmt.Println("		Permanently delete all stored vault data and reset the application.")
