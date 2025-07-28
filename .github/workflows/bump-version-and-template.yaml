@@ -5,7 +5,7 @@ on:
 jobs:
   bump-version:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - uses: actions/checkout@v3
 
       - name: Fetch tags
@@ -28,7 +28,9 @@ jobs:
         run: |
           version=${{ steps.get_tag.outputs.new_version }}
           date=$(date +'%Y-%m-%d')
-          changelog_entry="## [$version] - $date
+          changelog_entry=$(cat <<EOF
+          ## [$versiono] - $date
+
           ### Added
           - New features or enhancements
 
@@ -37,8 +39,23 @@ jobs:
 
           ### Removed
           - Deprecated or removed features
-          "
-          { echo "$changelog_entry"; cat CHANGELOG.md; } > tmp && mv tmp CHANGELOG.md
+
+          EOF
+          )
+
+          awk -v entry="$changelog_entry" '
+            BEGIN { printed = 0}
+            /^# Changelog/ {
+              print
+              next
+            }
+            !printed {
+              print ""
+              print entry
+              printed = 1
+            }
+            { print }
+          ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
       - name: Commit and tag
         run: |
