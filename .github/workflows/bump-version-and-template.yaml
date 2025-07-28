@@ -33,7 +33,7 @@ jobs:
           version=${{ steps.get_tag.outputs.new_version }}
           date=$(date +'%Y-%m-%d')
           changelog_entry=$(cat <<EOF
-          ## [$versiono] - $date
+          ## [$version] - $date
 
           ### Added
           - New features or enhancements
