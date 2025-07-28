@@ -1,6 +1,7 @@
 on:
   push:
     branches: [stable]
+  workflow_dispatch:
 
 jobs:
   release:
@@ -20,14 +21,25 @@ jobs:
           git fetch --tags
           echo "tag=$(git tag --sort=-v:refname | tail -n 1)" >> $GITHUB_OUTPUT
 
-      - name: Extract changelog
+      - name: Read changelog
         id: changelog
-        run: |
-          version=${{ steps.tag.outputs.tag }}
-          awk "/^## \[$version\]/,/^## \[/" CHANGELOG.md | sed '$d' > release_body.md
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          cat release_body.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag.outputs.tag }}
+          path: ./CHANGELOG.md
+
+      # - name: Extract changelog
+      #   id: changelog
+      #   run: |
+      #     version=${{ steps.tag.outputs.tag }}
+      #     awk -v v="## [$version]" '
+      #       $0 ~ v {found=1; next}
+      #       /^## \[/ && found {exit}
+      #       found {print}
+      #     ' CHANGELOG.md > release_body.md
+      #     echo "log<<EOF" >> $GITHUB_OUTPUT
+      #     cat release_body.md >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Build binaries
         run: |
@@ -35,18 +47,12 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -o dist/govault-linux ./cmd/govault
           GOOS=windows GOARCH=amd64 go build -o dist/govault-windows.exe ./cmd/govault
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: Govault ${{ steps.tag.outputs.tag }}
-          body: ${{ steps.changelog.outputs.log }}
-
       - name: Upload binaries
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: Govault ${{ steps.tag.outputs.tag }}
+          body: ${{ steps.changelog.outputs.changes }}
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

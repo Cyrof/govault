@@ -1,6 +1,11 @@
 on:
-  push:
+  pull_request:
     branches: [main]
+    types: [closed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   bump-version:
@@ -29,7 +34,7 @@ jobs:
           version=${{ steps.get_tag.outputs.new_version }}
           date=$(date +'%Y-%m-%d')
           changelog_entry=$(cat <<EOF
-          ## [$versiono] - $date
+          ## [$version] - $date
 
           ### Added
           - New features or enhancements
@@ -45,14 +50,12 @@ jobs:
 
           awk -v entry="$changelog_entry" '
             BEGIN { printed = 0}
-            /^# Changelog/ {
+            /^---$/ && !inserted {
               print
-              next
-            }
-            !printed {
               print ""
               print entry
-              printed = 1
+              inserted = 1
+              next
             }
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
