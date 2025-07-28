@@ -10,10 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/)
 ## [v0.1.0] - 2025-07-28
 
 ### Added
-- New features or enhancements
+
+- `Purge` command allows users to completely reset govault by deleting `meta.json` and `vault.enc` files
+- `List` command allows users to list out all the keys stored in the vault without the values
+- Added new GitHub CI to automate version bump, changelogs templating, auto build, and release for golang binaries
 
 ### Changed
-- Refactors or behavior changes
+
+- Updated the `README` to include the guides for the new features
 
 ### Removed
-- Deprecated or removed features
+
+- Nothing removed in this release
