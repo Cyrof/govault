@@ -25,7 +25,7 @@ jobs:
         id: changelog
         run: |
           version=${{ steps.tag.outputs.tag }}
-          awk "/^## \[$version\]/,/^## \[/" CHANGELOG.md | sed '$d' > release_body.md
+          awk "/^## \[\Q$version\E\]/ {print_flag=1; next} /^## \[/ && print_flag { exit } print_flag" CHANGELOG.md > release_body.md
           echo "log<<EOF" >> $GITHUB_OUTPUT
           cat release_body.md >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
