@@ -1,0 +1,52 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v3
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          tag=$(git tag --sort=-v:refname | grep '^v' | tail -n 1)
+          if [ -z "$tag" ]; then 
+            echo "new_version=v0.1.0" >> $GITHUB_OUTPUT
+          else
+            version=$(echo "$tag" | sed 's/^v//')
+            IFS='.' read -r major minor patch <<< "$version"
+            patch=$((patch + 1))
+            echo "new_version=v$major.$minor.$patch" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Bump and create changelog entry
+        run: |
+          version=${{ steps.get_tag.outputs.new_version }}
+          date=$(date +'%Y-%m-%d')
+          changelog_entry="## [$version] - $date
+          ### Added
+          - New features or enhancements
+
+          ### Changed
+          - Refactors or behavior changes
+
+          ### Removed
+          - Deprecated or removed features
+          "
+          { echo "$changelog_entry"; cat CHANGELOG.md; } > tmp && mv tmp CHANGELOG.md
+
+      - name: Commit and tag
+        run: |
+          version=${{ steps.get_tag.outputs.new_version }}
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(CHANGELOG): bump to $version and add changelog template"
+          git tag $version
+          git push origin main --tags
+          git push
