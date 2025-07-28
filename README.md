@@ -36,53 +36,29 @@ go run ./cmd/govault/main.go
 ```
 
 ### First-Time Setup
-On first run, GoVault will: 
+
+On first run, GoVault will:
+
 - Prompt you to set a master password
-- Generate a salt and hash for verification 
+- Generate a salt and hash for verification
 - Create an encrypted vault file (`vault.enc`) and metadata file (`meta.json`) locally
 
-### Commands 
+### Commands
+
 ```bash
 ./govault <command> [flags]
 ```
 
 #### `add`
+
 Add a new secret (key-value pair) to the vault
+
 ```bash
 ./govault add -key <key> -value <value>
 ```
+
 - `-key`: The name/identifier of the secret
 - `-value`: The value to store securely
-
-#### `get`
-Retrieve a stored secret by key
-```bash
-./govault get -key <key>  
-```
-- `-key`: The name of the secret to retrieve
-
-#### `list`
-List all stored keys in the vault 
-```bash
-./govault list
-```
-- Shows all keys currently stored, but **not** their values (for security)
-
-#### `purge`
-Completely reset the vault (requires confirmation)
-```bash
-./govault purge
-```
-=======
-
-Add a new secret (key-value pair) to the vault
-
-```bash
-./govault add -key <key> -value <value>
-```
-
-- `-key`: The name/identifier of the secret
-- `-valule`: The value to store securely
 
 #### `get`
 
@@ -111,11 +87,51 @@ Completely reset the vault (requires confirmation)
 ```bash
 ./govault purge
 ```
+
+Add a new secret (key-value pair) to the vault
+
+```bash
+./govault add -key <key> -value <value>
+```
+
+- `-key`: The name/identifier of the secret
+- `-value`: The value to store securely
+
+#### `get`
+
+Retrieve a stored secret by key
+
+```bash
+./govault get -key <key>
+```
+
+- `-key`: The name of the secret to retrieve
+
+#### `list`
+
+List all stored keys in the vault
+
+```bash
+./govault list
+```
+
+- Shows all keys currently stored, but **not** their values (for security)
+
+#### `purge`
+
+Completely reset the vault (requires confirmation)
+
+```bash
+./govault purge
+```
+
 - Deletes both `meta.json` and `vault.enc` files
 - Prompts the user to confirm the action before proceeding
 
 #### Default
-If no command is passed: 
+
+If no command is passed:
+
 ```bash
 ./govault
 ```
