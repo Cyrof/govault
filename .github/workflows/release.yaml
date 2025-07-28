@@ -52,7 +52,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: Govault ${{ steps.tag.outputs.tag }}
-          body: ${{ steps.changelog.outputs.log }}
+          body: ${{ steps.changelog.outputs.changes }}
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
