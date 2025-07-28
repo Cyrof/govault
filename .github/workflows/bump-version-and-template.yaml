@@ -48,14 +48,12 @@ jobs:
 
           awk -v entry="$changelog_entry" '
             BEGIN { printed = 0}
-            /^# Changelog/ {
+            /^---$/ && !inserted {
               print
-              next
-            }
-            !printed {
               print ""
               print entry
-              printed = 1
+              inserted = 1
+              next
             }
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
