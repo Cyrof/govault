@@ -57,6 +57,7 @@ func Execute(v *vault.Vault) {
 	addCmd := flag.NewFlagSet("add", flag.ExitOnError)
 	getCmd := flag.NewFlagSet("get", flag.ExitOnError)
 	purgeCmd := flag.NewFlagSet("purge", flag.ExitOnError)
+	listCmd := flag.NewFlagSet("list", flag.ExitOnError)
 
 	// sub args for add arg
 	addKey := addCmd.String("key", "", "Key to store")
@@ -97,6 +98,11 @@ func Execute(v *vault.Vault) {
 			fmt.Println("Purge operation cancelled. No changes were made.")
 			os.Exit(1)
 		}
+	case "list":
+		Setup(v)
+		listCmd.Parse(os.Args[2:])
+		v.DisplayKeys()
+		os.Exit(1)
 	default:
 		PrintUsage()
 		os.Exit(1)
