@@ -21,18 +21,25 @@ jobs:
           git fetch --tags
           echo "tag=$(git tag --sort=-v:refname | tail -n 1)" >> $GITHUB_OUTPUT
 
-      - name: Extract changelog
+      - name: Read changelog
         id: changelog
-        run: |
-          version=${{ steps.tag.outputs.tag }}
-          awk -v v="## [$version]" '
-            $0 ~ v {found=1; next}
-            /^## \[/ && found {exit}
-            found {print}
-          ' CHANGELOG.md > release_body.md
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          cat release_body.md >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          version: ${{ steps.tag.outputs.tag }}
+          path: ./CHANGELOG.md
+
+      # - name: Extract changelog
+      #   id: changelog
+      #   run: |
+      #     version=${{ steps.tag.outputs.tag }}
+      #     awk -v v="## [$version]" '
+      #       $0 ~ v {found=1; next}
+      #       /^## \[/ && found {exit}
+      #       found {print}
+      #     ' CHANGELOG.md > release_body.md
+      #     echo "log<<EOF" >> $GITHUB_OUTPUT
+      #     cat release_body.md >> $GITHUB_OUTPUT
+      #     echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Build binaries
         run: |
