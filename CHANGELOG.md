@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/)
 ## [v0.1.0] - 2025-07-28
 
 ### Added
+- New features or enhancements
+
+### Changed
+- Refactors or behavior changes
+
+### Removed
+- Deprecated or removed features
+
+## [v0.1.0] - 2025-07-28
+
+### Added
 
 - `Purge` command allows users to completely reset govault by deleting `meta.json` and `vault.enc` files
 - `List` command allows users to list out all the keys stored in the vault without the values
