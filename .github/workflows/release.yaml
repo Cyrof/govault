@@ -36,19 +36,12 @@ jobs:
           GOOS=linux GOARCH=amd64 go build -o dist/govault-linux ./cmd/govault
           GOOS=windows GOARCH=amd64 go build -o dist/govault-windows.exe ./cmd/govault
 
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: Govault ${{ steps.tag.outputs.tag }}
-          body: ${{ steps.changelog.outputs.log }}
-
       - name: Upload binaries
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
+          name: Govault ${{ steps.tag.outputs.tag }}
+          body: ${{ steps.changelog.outputs.log }}
           files: dist/*
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
