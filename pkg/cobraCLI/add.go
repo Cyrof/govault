@@ -12,8 +12,8 @@ var addCmd = &cobra.Command{
 	Short:   "Add a new secret",
 	Long:    `The 'add' command allows you to securely store a key-value pair in your local encrypted vault.`,
 	Example: `	
-		govault add --key github --value myGitHubToken123
-		govault a -k email -v mypassword
+	govault add --key github --value myGitHubToken123
+	govault a -k email -v mypassword
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v.AddSecret(key, value)

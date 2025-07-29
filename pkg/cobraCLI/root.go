@@ -15,6 +15,7 @@ import (
 var (
 	skipSetupCommands = map[string]bool{
 		"help":       true,
+		"purge":      true,
 		"completion": true,
 	}
 

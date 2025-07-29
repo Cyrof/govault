@@ -12,8 +12,8 @@ var getCmd = &cobra.Command{
 	Short:   "Get value of secret",
 	Long:    `The 'get' command allows you to securely retrieve a secret value from the encrypted vault by specifying the associated key.`,
 	Example: `
-		govault get --key github
-		govault g -k email
+	govault get --key github
+	govault g -k email
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		secret, ok := v.GetSecret(key)
