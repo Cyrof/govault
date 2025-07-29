@@ -19,7 +19,7 @@ func (c *Crypto) Decrypt(ciphertext []byte) ([]byte, error) {
 
 	nonceSize := aesGCM.NonceSize()
 	if len(ciphertext) < nonceSize {
-		return nil, errors.New("Ciphertext too short")
+		return nil, errors.New("ciphertext too short")
 	}
 
 	nonce, data := ciphertext[:nonceSize], ciphertext[nonceSize:]
