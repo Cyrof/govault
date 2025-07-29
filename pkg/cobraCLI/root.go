@@ -28,6 +28,7 @@ var (
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			// skip if its just the root command
 			if cmd.Parent() == nil || skipSetupCommands[cmd.Name()] {
+				cli.Banner()
 				return
 			}
 
