@@ -27,7 +27,9 @@ var getCmd = &cobra.Command{
 
 func init() {
 	getCmd.Flags().StringVarP(&key, "key", "k", "", "The name/identifier of the sevice")
-	getCmd.MarkFlagRequired("key")
+	if err := getCmd.MarkFlagRequired("key"); err != nil {
+		fmt.Println("An error occured:", err)
+	}
 
 	rootCmd.AddCommand(getCmd)
 }

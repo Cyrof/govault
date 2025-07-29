@@ -19,7 +19,9 @@ var purgeCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cli.PromptPurge() {
-			v.FileIO.PurgeVault()
+			if err := v.FileIO.PurgeVault(); err != nil {
+				fmt.Println("Failed to purge vault:", err)
+			}
 			fmt.Println("All vault data has been successfully purged. The system has been reset.")
 		} else {
 			fmt.Println("Purge operation cancelled. No changes were made.")

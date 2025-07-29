@@ -30,16 +30,28 @@ func handleExistingUser(v *vault.Vault) {
 		os.Exit(1)
 	}
 
-	v.Load()
+	if err := v.Load(); err != nil {
+		fmt.Println("Error loading vault:", err)
+	}
+
 	fmt.Println("Login successful.")
 }
 
 func handleFirstTime(v *vault.Vault) {
 	password, _ := PromptNewPassword()
 
-	v.Crypto.SetupNewPassword(password)
+	if err := v.Crypto.SetupNewPassword(password); err != nil {
+		fmt.Println("Error creating master password:", err)
+	}
+
 	metaData := v.Crypto.ToMeta()
-	v.FileIO.EnsureVaultDir()
-	v.FileIO.WriteMeta(metaData)
+	if err := v.FileIO.EnsureVaultDir(); err != nil {
+		fmt.Println("Error initialising directory:", err)
+	}
+
+	if err := v.FileIO.WriteMeta(metaData); err != nil {
+		fmt.Println("Error writing meta data:", err)
+	}
+
 	fmt.Println("Password created successfully.")
 }
