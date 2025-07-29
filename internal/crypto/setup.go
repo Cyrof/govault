@@ -15,7 +15,7 @@ func (c *Crypto) SetupNewPassword(password string) error {
 func (c *Crypto) SetupFromMeta(password string, storedSalt, storedHash []byte) error {
 	key := KDF(password, storedSalt)
 	if !VerifyHash(key, storedHash) {
-		return errors.New("Invalid Password")
+		return errors.New("invalid password")
 	}
 
 	c.Salt = storedSalt
