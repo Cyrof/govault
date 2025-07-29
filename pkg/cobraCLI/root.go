@@ -13,6 +13,11 @@ import (
 )
 
 var (
+	skipSetupCommands = map[string]bool{
+		"help":       true,
+		"completion": true,
+	}
+
 	v *vault.Vault
 
 	rootCmd = &cobra.Command{
@@ -20,9 +25,16 @@ var (
 		Short: "A secure local password vault CLI tool",
 		Long:  `GoVault is a lightweight CLI tool for storing secrets using AES encryption`,
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			if cmd.Parent() == nil {
+			// skip if its just the root command
+			if cmd.Parent() == nil || skipSetupCommands[cmd.Name()] {
 				return
 			}
+
+			// skip if command is not runnable
+			if !cmd.Runnable() {
+				return
+			}
+
 			// initialise dependencies
 			crypto := crypto.NewCrypto()
 			io := fileIO.NewFileIO()
