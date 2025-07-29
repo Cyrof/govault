@@ -23,12 +23,12 @@ func (f *FileIO) ReadMeta() ([]byte, []byte, error) {
 
 	saltBytes, err := base64.StdEncoding.DecodeString(meta.Salt)
 	if err != nil {
-		return nil, nil, fmt.Errorf("Failed to decode salt: %w", err)
+		return nil, nil, fmt.Errorf("failed to decode salt: %w", err)
 	}
 
 	hashBytes, err := base64.StdEncoding.DecodeString(meta.Hash)
 	if err != nil {
-		return nil, nil, fmt.Errorf("Failed to decode hash: %w", err)
+		return nil, nil, fmt.Errorf("failed to decode hash: %w", err)
 	}
 
 	return saltBytes, hashBytes, nil
