@@ -24,11 +24,10 @@ var (
 	rootCmd = &cobra.Command{
 		Use:   "govault",
 		Short: "A secure local password vault CLI tool",
-		Long:  `GoVault is a lightweight CLI tool for storing secrets using AES encryption`,
+		Long:  cli.LoadBanner(),
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			// skip if its just the root command
 			if cmd.Parent() == nil || skipSetupCommands[cmd.Name()] {
-				cli.Banner()
 				return
 			}
 

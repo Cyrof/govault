@@ -18,7 +18,7 @@ func Setup(v *vault.Vault) {
 func handleExistingUser(v *vault.Vault) {
 	salt, hash, err := v.FileIO.ReadMeta()
 	if err != nil {
-		fmt.Errorf("Failed to read meta:", err)
+		fmt.Println("Failed to read meta:", err)
 		os.Exit(1)
 	}
 
@@ -26,7 +26,7 @@ func handleExistingUser(v *vault.Vault) {
 
 	err = v.Crypto.SetupFromMeta(password, salt, hash)
 	if err != nil {
-		fmt.Errorf("Password Invalid:", err)
+		fmt.Println("Password Invalid:", err)
 		os.Exit(1)
 	}
 

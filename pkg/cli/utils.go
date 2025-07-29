@@ -3,6 +3,7 @@ package cli
 import (
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 )
 
@@ -17,4 +18,15 @@ func ClearScreen() {
 		cmd.Stdout = os.Stdout
 		cmd.Run()
 	}
+}
+
+func LoadBanner() string {
+	path := filepath.Join("assets", "banner.txt")
+
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return "GoVault - Secure CLI Tool\n"
+	}
+
+	return string(data)
 }
