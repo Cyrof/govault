@@ -10,7 +10,11 @@ func main() {
 	f := fileIO.NewFileIO()
 	logger.InitLogger(f)
 
-	defer logger.Logger.Sync()
+	defer func() {
+		if err := logger.Logger.Sync(); err != nil {
+			logger.Logger.Warnw("Logger sync failed", "error", err)
+		}
+	}()
 
 	cobraCLI.Execute()
 }
