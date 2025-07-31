@@ -26,12 +26,9 @@ jobs:
         id: tag
         run: |
           git fetch --tags
-          tag=$(git tag --points-at HEAD | head -n 1)
-          if [ -z "$tag" ]; then
-            echo "::error ::No tag found on current commit. Aborting release."
-            exit 1
-          fi
-          echo "tag=$tag" >> $GITHUB_OUTPUT
+          latest_tag=$(git tag --sort-v:refname | grep '^v' | tail -n 1)
+          echo "Latest tag: $latest_tag"
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Read changelog
         id: changelog
