@@ -74,11 +74,7 @@ jobs:
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
-      - name: Print new version
-        run: |
-          echo "New version: ${{ steps.get_version.outputs.new_version }}"
-
-      - name: Create release branch
+      - name: Commit and tag version
         run: |
           version=${{ steps.get_version.outputs.new_version }}
           git config user.name "github-actions"
@@ -87,7 +83,7 @@ jobs:
           git commit -m "chore(CHANGELOG): bump to $version and add changelog template"
           git tag $version
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
-          git push origin release/$version
+          git push origin release/$version --tags
 
       - name: Open Pull Request to main
         uses: peter-evans/create-pull-request@v5
