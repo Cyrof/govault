@@ -13,8 +13,13 @@ jobs:
       (github.event_name == 'pull_request' && github.head_ref == 'dev') ||
       (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
+    env:
+      GH_PAT: ${{ secrets.GH_PAT }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Fetch tags
         run: git fetch --tags
@@ -29,12 +34,13 @@ jobs:
             version=$(echo "$tag" | sed 's/^v//')
             IFS='.' read -r major minor patch <<< "$version"
             patch=$((patch + 1))
-            echo "new_version=v$major.$minor.$patch" >> $GITHUB_OUTPUT
+            echo "new_version=v$major.$minor.$patch" 
           fi
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
       - name: Bump and create changelog entry
         run: |
-          version=${{ steps.get_tag.outputs.new_version }}
+          version=${{ steps.get_version.outputs.new_version }}
           date=$(date +'%Y-%m-%d')
           changelog_entry=$(cat <<EOF
           ## [$version] - $date
@@ -63,15 +69,30 @@ jobs:
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
-      - name: Commit and tag
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Create release branch
         run: |
-          version=${{ steps.get_tag.outputs.new_version }}
+          version=${{ steps.get_version.outputs.new_version }}
+          git checkout -b release/$version
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add CHANGELOG.md
           git commit -m "chore(CHANGELOG): bump to $version and add changelog template"
           git tag $version
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
-          git push origin main --tags
+          git push origin release/$version
+
+      - name: Open Pull Request to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GH_PAT }}
+          title: "chore(release): ${{ steps.get_version.outputs.new_version }}"
+          body: |
+            This PR prepares the release **${{ steps.get_version.outputs.new_version }}**.
+
+            ### Checklist
+            - [ ] Review and complete changelog
+            - [ ] Ensure all tests pass
+            - [ ] Merge this PR to publish the release
+
+          head: release/${{ steps.get_version.outputs.new_version }}
+          base: main
