@@ -94,14 +94,14 @@ jobs:
       - name: Create Pull Request with GitHub CLI
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
+          VERSION: ${{ steps.get_version.outputs.new_version }}
         run: |
-          version=${{ steps.get_version.outputs.get_version }}
           gh pr create \
-            --title "chore(release): $version" \
-            --body "This PR prepares the release **$version**.
+            --title "chore(release): $VERSION" \
+            --body "This PR prepares the release **$VERSION**.
           ### Checklist
           - [ ] Review and complete changelog
           - [ ] Ensure all tests pass
           - [ ] Merge this PR to publish the release" \
-            --head release/$version \
+            --head release/$VERSION \
             --base main
