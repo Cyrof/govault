@@ -11,7 +11,7 @@ func main() {
 	logger.InitLogger(f)
 
 	defer func() {
-		if err := logger.Logger.Sync(); err != nil {
+		if err := logger.Logger.Sync(); err != nil && err.Error() != "sync /dev/stderr: invalid argument" { // this is ignore since it is a known issue and does not affect functionality
 			logger.Logger.Warnw("Logger sync failed", "error", err)
 		}
 	}()
