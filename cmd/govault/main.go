@@ -1,16 +1,20 @@
 package main
 
 import (
-	"github.com/Cyrof/govault/internal/crypto"
 	"github.com/Cyrof/govault/internal/fileIO"
-	"github.com/Cyrof/govault/internal/vault"
-	"github.com/Cyrof/govault/pkg/cli"
+	"github.com/Cyrof/govault/internal/logger"
+	"github.com/Cyrof/govault/pkg/cobraCLI"
 )
 
 func main() {
-	crypto := crypto.NewCrypto()
-	io := fileIO.NewFileIO()
-	store := vault.NewVault(io, crypto)
+	f := fileIO.NewFileIO()
+	logger.InitLogger(f)
 
-	cli.Execute(store)
+	defer func() {
+		if err := logger.Logger.Sync(); err != nil && err.Error() != "sync /dev/stderr: invalid argument" { // this is ignore since it is a known issue and does not affect functionality
+			logger.Logger.Warnw("Logger sync failed", "error", err)
+		}
+	}()
+
+	cobraCLI.Execute()
 }

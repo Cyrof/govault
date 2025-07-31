@@ -9,6 +9,7 @@ type FileIO struct {
 	VaultDir  string
 	MetaPath  string
 	VaultPath string
+	LogPath   string
 }
 
 // constructor for fileIO
@@ -23,5 +24,6 @@ func NewFileIO() *FileIO {
 		VaultDir:  vaultDir,
 		MetaPath:  filepath.Join(vaultDir, "meta.json"),
 		VaultPath: filepath.Join(vaultDir, "vault.enc"),
+		LogPath:   filepath.Join(vaultDir, "logs", "govault.log"),
 	}
 }
