@@ -62,6 +62,8 @@ jobs:
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
       - name: Commit and tag
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           version=${{ steps.get_tag.outputs.new_version }}
           git config user.name "github-actions"
@@ -69,5 +71,5 @@ jobs:
           git add CHANGELOG.md
           git commit -m "chore(CHANGELOG): bump to $version and add changelog template"
           git tag $version
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
           git push origin main --tags
-          git push

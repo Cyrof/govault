@@ -28,19 +28,6 @@ jobs:
           version: ${{ steps.tag.outputs.tag }}
           path: ./CHANGELOG.md
 
-      # - name: Extract changelog
-      #   id: changelog
-      #   run: |
-      #     version=${{ steps.tag.outputs.tag }}
-      #     awk -v v="## [$version]" '
-      #       $0 ~ v {found=1; next}
-      #       /^## \[/ && found {exit}
-      #       found {print}
-      #     ' CHANGELOG.md > release_body.md
-      #     echo "log<<EOF" >> $GITHUB_OUTPUT
-      #     cat release_body.md >> $GITHUB_OUTPUT
-      #     echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Build binaries
         run: |
           mkdir dist 
