@@ -34,8 +34,9 @@ jobs:
             version=$(echo "$tag" | sed 's/^v//')
             IFS='.' read -r major minor patch <<< "$version"
             patch=$((patch + 1))
-            echo "new_version=v$major.$minor.$patch" >> $GITHUB_OUTPUT
+            echo "new_version=v$major.$minor.$patch"
           fi
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
       - name: Bump and create changelog entry
         run: |
@@ -68,10 +69,13 @@ jobs:
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
+      - name: Print new version
+        run: |
+          echo "New version: ${{ steps.get_version.outputs.new_version }}"
+
       - name: Create release branch
         run: |
           version=${{ steps.get_version.outputs.new_version }}
-          echo "Creating release branch: release/$version"
           git checkout -b release/$version
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
