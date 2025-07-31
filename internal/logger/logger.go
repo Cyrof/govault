@@ -27,11 +27,19 @@ func InitLogger(f *fileIO.FileIO) {
 		env := os.Getenv("GO_ENV")
 		// setup dev logger
 		if env == "dev" {
-			log, err := zap.NewDevelopment()
+			config := zap.NewDevelopmentConfig()
+			config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+			config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+
+			logger, err := config.Build()
 			if err != nil {
 				panic("failed to initialise development logger: " + err.Error())
 			}
-			Logger = log.Sugar()
+
+			Logger = logger.Sugar()
+			if warn != "" {
+				Logger.Warn(warn)
+			}
 			return
 		}
 
@@ -53,7 +61,7 @@ func InitLogger(f *fileIO.FileIO) {
 		encoderCfg := zap.NewProductionEncoderConfig()
 		encoderCfg.TimeKey = "timestamp"
 		encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
-		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		encoderCfg.EncodeLevel = zapcore.CapitalLevelEncoder
 
 		core := zapcore.NewCore(
 			zapcore.NewJSONEncoder(encoderCfg),
