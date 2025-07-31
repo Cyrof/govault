@@ -92,6 +92,8 @@ jobs:
           git push -u origin release/$version --tags
 
       - name: Create Pull Request with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           version=${{ steps.get_version.outputs.get_version }}
           gh pr create \
