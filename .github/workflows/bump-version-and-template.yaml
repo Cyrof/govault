@@ -74,6 +74,11 @@ jobs:
             { print }
           ' CHANGELOG.md > tmp && mv tmp CHANGELOG.md
 
+      - name: Print diff
+        run: |
+          git status
+          git diff
+
       - name: Commit and tag version
         run: |
           version=${{ steps.get_version.outputs.new_version }}
