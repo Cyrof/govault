@@ -99,4 +99,5 @@ jobs:
             - [ ] Merge this PR to publish the release
 
           branch: release/${{ steps.get_version.outputs.new_version }}
+          commit-message: "chore(CHANGELOG): bump to ${{ steps.get_version.outputs.new_version }} and add changelog template"
           base: main
