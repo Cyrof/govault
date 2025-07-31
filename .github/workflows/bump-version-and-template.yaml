@@ -79,6 +79,9 @@ jobs:
           git status
           git diff
 
+      - name: Print resulting CHANGELOG.md
+        run: cat CHANGELOG.md
+
       - name: Commit and tag version
         run: |
           version=${{ steps.get_version.outputs.new_version }}
