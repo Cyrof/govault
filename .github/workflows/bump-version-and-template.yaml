@@ -98,5 +98,5 @@ jobs:
             - [ ] Ensure all tests pass
             - [ ] Merge this PR to publish the release
 
-          head: release/${{ steps.get_version.outputs.new_version }}
+          branch: release/${{ steps.get_version.outputs.new_version }}
           base: main
