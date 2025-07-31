@@ -17,9 +17,7 @@ jobs:
       GH_PAT: ${{ secrets.GH_PAT }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
       - name: Fetch tags
         run: git fetch --tags
@@ -93,19 +91,15 @@ jobs:
           git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}
           git push -u origin release/$version --tags
 
-      - name: Open Pull Request to main
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GH_PAT }}
-          title: "chore(release): ${{ steps.get_version.outputs.new_version }}"
-          body: |
-            This PR prepares the release **${{ steps.get_version.outputs.new_version }}**.
-
-            ### Checklist
-            - [ ] Review and complete changelog
-            - [ ] Ensure all tests pass
-            - [ ] Merge this PR to publish the release
-
-          branch: release/${{ steps.get_version.outputs.new_version }}
-          commit-message: "chore(CHANGELOG): bump to ${{ steps.get_version.outputs.new_version }} and add changelog template"
-          base: main
+      - name: Create Pull Request with GitHub CLI
+        run: |
+          version=${{ steps.get_version.outputs.get_version }}
+          gh pr create \
+            --title "chore(release): $version" \
+            --body "This PR prepares the release **$version**.
+          ### Checklist
+          - [ ] Review and complete changelog
+          - [ ] Ensure all tests pass
+          - [ ] Merge this PR to publish the release" \
+            --head release/$version \
+            --base main
