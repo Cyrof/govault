@@ -34,7 +34,7 @@ jobs:
             version=$(echo "$tag" | sed 's/^v//')
             IFS='.' read -r major minor patch <<< "$version"
             patch=$((patch + 1))
-            echo "new_version=v$major.$minor.$patch"
+            new_version="v$major.$minor.$patch"
           fi
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
