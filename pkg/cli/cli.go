@@ -1,9 +1,7 @@
 package cli
 
 import (
-	"fmt"
-	"os"
-
+	"github.com/Cyrof/govault/internal/logger"
 	"github.com/Cyrof/govault/internal/vault"
 )
 
@@ -18,40 +16,46 @@ func Setup(v *vault.Vault) {
 func handleExistingUser(v *vault.Vault) {
 	salt, hash, err := v.FileIO.ReadMeta()
 	if err != nil {
-		fmt.Println("Failed to read meta:", err)
-		os.Exit(1)
+		Error("Failed to read metadata.\nExiting...\n\n")
+		logger.Logger.Fatalw("Failed to load meta", "path", v.FileIO.MetaPath, "error", err)
 	}
 
 	password, _ := PromptPassword()
 
 	err = v.Crypto.SetupFromMeta(password, salt, hash)
 	if err != nil {
-		fmt.Println("Password Invalid:", err)
-		os.Exit(1)
+		Error("Login Failed.\n\n")
+		logger.Logger.Fatalw("Failed to login", "error", err)
 	}
 
 	if err := v.Load(); err != nil {
-		fmt.Println("Error loading vault:", err)
+		Error("Error loading vault.\n\n")
+		logger.Logger.Panicw("Error loading vault", "error", err)
 	}
 
-	fmt.Println("Login successful.")
+	logger.Logger.Info("Login successful.")
+	Success("Login successful.\n\n")
 }
 
 func handleFirstTime(v *vault.Vault) {
 	password, _ := PromptNewPassword()
 
 	if err := v.Crypto.SetupNewPassword(password); err != nil {
-		fmt.Println("Error creating master password:", err)
+		Error("Error creating password.\n\n")
+		logger.Logger.Panicw("Error creating master password", "error", err)
 	}
 
 	metaData := v.Crypto.ToMeta()
 	if err := v.FileIO.EnsureVaultDir(); err != nil {
-		fmt.Println("Error initialising directory:", err)
+		Error("Error initialising directory.\n\n")
+		logger.Logger.Warnw("Error initialising directory", "error", err)
 	}
 
 	if err := v.FileIO.WriteMeta(metaData); err != nil {
-		fmt.Println("Error writing meta data:", err)
+		Error("Error writing meta data.\n\n")
+		logger.Logger.Panicw("Error writing meta data", "error", err)
 	}
 
-	fmt.Println("Password created successfully.")
+	logger.Logger.Info("Password created successfully.")
+	Success("Password created successfully.\n\n")
 }

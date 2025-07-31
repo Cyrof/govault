@@ -1,9 +1,10 @@
 package cobraCLI
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/Cyrof/govault/internal/fileIO"
+	"github.com/Cyrof/govault/internal/logger"
 	"github.com/Cyrof/govault/pkg/cli"
 	"github.com/spf13/cobra"
 )
@@ -19,12 +20,15 @@ var purgeCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if cli.PromptPurge() {
-			if err := v.FileIO.PurgeVault(); err != nil {
-				fmt.Println("Failed to purge vault:", err)
+			fileIO := fileIO.NewFileIO()
+			if err := fileIO.PurgeVault(); err != nil {
+				cli.Error("Failed to purge vault: %v\n", err)
+				logger.Logger.Debugw("Failed to purge vault", "error", err)
 			}
-			fmt.Println("All vault data has been successfully purged. The system has been reset.")
+			cli.Success("All vault data has been successfully purged. The system has been reset.")
+			logger.Logger.Info("All vault data purged")
 		} else {
-			fmt.Println("Purge operation cancelled. No changes were made.")
+			cli.Warn("Purge operation cancelled. No changes were made.")
 			os.Exit(1)
 		}
 	},

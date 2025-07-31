@@ -7,8 +7,6 @@
 *.dll
 *.so
 *.dylib
-# This is to ignore the binary file 
-govault 
 
 # Test binary, built with `go test -c`
 *.test

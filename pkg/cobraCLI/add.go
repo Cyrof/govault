@@ -1,8 +1,8 @@
 package cobraCLI
 
 import (
-	"fmt"
-
+	"github.com/Cyrof/govault/internal/logger"
+	"github.com/Cyrof/govault/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -17,9 +17,11 @@ var addCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v.AddSecret(key, value)
-		fmt.Println("Secret added.")
+		cli.Success("Secret added.")
+		logger.Logger.Infow("Secret added", "key", key)
 		if err := v.Save(); err != nil {
-			fmt.Println("Error saving vault:", err)
+			cli.Error("Error saving vault: %v\n", err)
+			logger.Logger.Errorw("Error saving vault", "error", err)
 		}
 	},
 }
@@ -28,10 +30,12 @@ func init() {
 	addCmd.Flags().StringVarP(&key, "key", "k", "", "The name/identifier for the service")
 	addCmd.Flags().StringVarP(&value, "value", "v", "", "The value to store")
 	if err := addCmd.MarkFlagRequired("key"); err != nil {
-		fmt.Println("An error occured:", err)
+		cli.Error("Failed to mark flag as required\n\n")
+		logger.Logger.Panicw("Failed to mark flag as required", "flag", "key", "error", err)
 	}
 	if err := addCmd.MarkFlagRequired("value"); err != nil {
-		fmt.Println("An error occured:", err)
+		cli.Error("Failed to mark flag as required\n\n")
+		logger.Logger.Panicw("Failed to mark flag as required", "flag", "key", "error", err)
 	}
 
 	rootCmd.AddCommand(addCmd)

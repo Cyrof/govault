@@ -24,13 +24,12 @@ func PromptNewPassword() (string, error) {
 
 		// check if pass 1 or 2 is empty
 		if pass1 == "" || pass2 == "" {
-			fmt.Println("Password cannot be empty. Please try again.")
-			continue
+			Warn("Password cannot be empty.\nPlease try again.\n\n")
 		}
 
 		// check if pass matches
 		if pass1 != pass2 {
-			fmt.Println("Password do not match. Please try again.")
+			Error("Password do not match.\nPlease try again.\n\n")
 			continue
 		}
 
@@ -47,7 +46,7 @@ func PromptPassword() (string, error) {
 		pass1 = strings.TrimSpace(pass1)
 
 		if pass1 == "" {
-			fmt.Println("Password cannot be empty. Please try again.")
+			Warn("Password cannot be empty.\nPlease try again.\n\n")
 			continue
 		}
 
