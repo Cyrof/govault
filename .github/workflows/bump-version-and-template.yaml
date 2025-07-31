@@ -38,6 +38,11 @@ jobs:
           fi
           echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
+      - name: Create release branch
+        run: |
+          version=${{ steps.get_version.outputs.new_version }}
+          git checkout -b release/$version
+
       - name: Bump and create changelog entry
         run: |
           version=${{ steps.get_version.outputs.new_version }}
@@ -76,7 +81,6 @@ jobs:
       - name: Create release branch
         run: |
           version=${{ steps.get_version.outputs.new_version }}
-          git checkout -b release/$version
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add CHANGELOG.md
