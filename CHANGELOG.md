@@ -10,13 +10,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/)
 ## [v0.1.1] - 2025-07-31
 
 ### Added
-- New features or enhancements
+
+- Integrated structured loggin using `zap` with `lumberjack` for log file rotation.
+- Configured environment-based logging for `dev` and `prod` modes.
+- Enhanced CLI output with colored formatting using the `fatih/color` package for better UX.
 
 ### Changed
-- Refactors or behavior changes
+
+- Replaced the original CLI implementation using Go's standard `flag` package with `cobra` for more extensible and user-friendly command handling.
 
 ### Removed
-- Deprecated or removed features
+
+- Nothing removed in this release
 
 ## [v0.1.0] - 2025-07-28
 
