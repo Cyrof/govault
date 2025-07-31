@@ -1,11 +1,9 @@
 package cobraCLI
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/Cyrof/govault/internal/crypto"
 	"github.com/Cyrof/govault/internal/fileIO"
+	"github.com/Cyrof/govault/internal/logger"
 	"github.com/Cyrof/govault/internal/vault"
 	"github.com/Cyrof/govault/pkg/cli"
 
@@ -49,7 +47,8 @@ var (
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+		logger.Logger.Errorw("Command execution failed", "error", err)
+
+		cli.Error("%v\n", err)
 	}
 }

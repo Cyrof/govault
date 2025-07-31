@@ -1,11 +1,13 @@
 package cli
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	"github.com/Cyrof/govault/internal/logger"
+	"github.com/fatih/color"
 )
 
 func ClearScreen() {
@@ -14,13 +16,13 @@ func ClearScreen() {
 		cmd := exec.Command("clear")
 		cmd.Stdout = os.Stdout
 		if err := cmd.Run(); err != nil {
-			fmt.Println("An error occured:", err)
+			logger.Logger.Debugw("Failed to clear screen", "error", err)
 		}
 	case "windows":
 		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
 		if err := cmd.Run(); err != nil {
-			fmt.Println("An error occured:", err)
+			logger.Logger.Debugw("Failed to clear screen", "error", err)
 		}
 	}
 }
@@ -30,8 +32,8 @@ func LoadBanner() string {
 
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return "GoVault - Secure CLI Tool\n"
+		return color.New(color.FgCyan, color.Bold).Sprintf("GoVault - Secure CLI Tool\n")
 	}
 
-	return string(data)
+	return color.New(color.FgCyan, color.Bold).Sprint(string(data))
 }
