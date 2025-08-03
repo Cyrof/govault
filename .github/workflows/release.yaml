@@ -1,14 +1,21 @@
 on:
-  push:
-    branches: [stable]
+  pull_request:
+    branches: [main]
+    types: [closed]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   release:
+    if: |
+      (github.event_name == 'pull_request' && startsWith(github.head_ref, 'release/')) ||
+      (github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -19,7 +26,13 @@ jobs:
         id: tag
         run: |
           git fetch --tags
-          echo "tag=$(git tag --sort=-v:refname | tail -n 1)" >> $GITHUB_OUTPUT
+          latest_tag=$(git tag --sort=-v:refname | grep '^v' | head -n 1)
+          if [ -z "$latest_tag" ]; then
+            echo "::error ::No version tag found."
+            exit 1
+          fi
+          echo "Latest tag: $latest_tag"
+          echo "tag=$latest_tag" >> $GITHUB_OUTPUT
 
       - name: Read changelog
         id: changelog
@@ -27,19 +40,6 @@ jobs:
         with:
           version: ${{ steps.tag.outputs.tag }}
           path: ./CHANGELOG.md
-
-      # - name: Extract changelog
-      #   id: changelog
-      #   run: |
-      #     version=${{ steps.tag.outputs.tag }}
-      #     awk -v v="## [$version]" '
-      #       $0 ~ v {found=1; next}
-      #       /^## \[/ && found {exit}
-      #       found {print}
-      #     ' CHANGELOG.md > release_body.md
-      #     echo "log<<EOF" >> $GITHUB_OUTPUT
-      #     cat release_body.md >> $GITHUB_OUTPUT
-      #     echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Build binaries
         run: |
