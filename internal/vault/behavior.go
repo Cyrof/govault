@@ -2,6 +2,7 @@
 package vault
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/Cyrof/govault/internal/model"
@@ -28,4 +29,13 @@ func (v *Vault) DisplayKeys() {
 	for key := range v.Secrets {
 		fmt.Println(" -", key)
 	}
+}
+
+// function to delete
+func (v *Vault) DeleteSecret(key string) error {
+	if !v.CheckKey(key) {
+		return errors.New("key not found in vault")
+	}
+	delete(v.Secrets, key)
+	return nil
 }
