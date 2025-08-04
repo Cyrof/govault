@@ -27,3 +27,18 @@ func (f *FileIO) EnsureVaultDir() error {
 func (f *FileIO) PurgeVault() error {
 	return os.RemoveAll(f.VaultDir)
 }
+
+// function to check if vault exists
+func (f *FileIO) IsEmpty() (bool, error) {
+	_, err := os.Stat(f.VaultPath)
+	if err == nil {
+		// file exists
+		return false, nil
+	}
+	if os.IsNotExist(err) {
+		// file does not exist
+		return true, nil
+	}
+	// other errors (e.g., permission)
+	return false, err
+}
