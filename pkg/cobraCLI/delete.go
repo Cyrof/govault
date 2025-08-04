@@ -35,6 +35,11 @@ var deleteCmd = &cobra.Command{
 			return
 		}
 
+		if err := v.Save(); err != nil {
+			cli.Error("Error saving vault: %v\n", err)
+			logger.Logger.Errorw("Error saving vault", "error", err)
+		}
+
 		cli.Success("Secret '%s' deleted successfully.\n", key)
 		logger.Logger.Infow("Secret deleted", "key", key)
 	},
