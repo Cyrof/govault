@@ -46,7 +46,7 @@ var deleteCmd = &cobra.Command{
 }
 
 func init() {
-	deleteCmd.Flags().StringVarP(&key, "key", "k", "", "The name/identifier of the service$")
+	deleteCmd.Flags().StringVarP(&key, "key", "k", "", "The name/identifier of the service")
 	if err := deleteCmd.MarkFlagRequired("key"); err != nil {
 		cli.Error("Failed to mark required flag: %v\n", err)
 		logger.Logger.Panicw("Failed to mark flag as required", "flag", "key", "error", err)
