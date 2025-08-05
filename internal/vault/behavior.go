@@ -39,3 +39,15 @@ func (v *Vault) DeleteSecret(key string) error {
 	delete(v.Secrets, key)
 	return nil
 }
+
+// function to updated password
+func (v *Vault) EditPassword(key string, newPass string) error {
+	if !v.CheckKey(key) {
+		return errors.New("key not found in vault")
+	}
+	v.Secrets[key] = model.Secret{
+		Key:   key,
+		Value: newPass,
+	}
+	return nil
+}
