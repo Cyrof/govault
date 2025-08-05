@@ -21,7 +21,7 @@ func PromptEdit(key string) (string, error) {
 		if confirm == "yes" {
 			return promptPassword(key), nil
 		} else {
-			return "", errors.New("Edit cancelled by user.")
+			return "", errors.New("Edit cancelled by user")
 		}
 	}
 }
