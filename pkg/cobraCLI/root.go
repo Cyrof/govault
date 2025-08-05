@@ -15,6 +15,7 @@ var (
 		"help":       true,
 		"purge":      true,
 		"completion": true,
+		"generate":   true,
 	}
 
 	v *vault.Vault
