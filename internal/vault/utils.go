@@ -20,6 +20,6 @@ func (v *Vault) GetKeys() ([]string, error) {
 	if len(keys) > 0 {
 		return keys, nil
 	} else {
-		return nil, errors.New("No keys in vault")
+		return nil, errors.New("no keys in vault")
 	}
 }
