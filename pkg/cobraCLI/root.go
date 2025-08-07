@@ -16,6 +16,7 @@ var (
 		"purge":      true,
 		"completion": true,
 		"generate":   true,
+		"import":     true,
 	}
 
 	v *vault.Vault
@@ -25,6 +26,11 @@ var (
 		Short: "A secure local password vault CLI tool",
 		Long:  cli.LoadBanner(),
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			// initialise dependencies
+			crypto := crypto.NewCrypto()
+			io := fileIO.NewFileIO()
+			v = vault.NewVault(io, crypto)
+
 			// skip if its just the root command
 			if cmd.Parent() == nil || skipSetupCommands[cmd.Name()] {
 				return
@@ -34,11 +40,6 @@ var (
 			if !cmd.Runnable() {
 				return
 			}
-
-			// initialise dependencies
-			crypto := crypto.NewCrypto()
-			io := fileIO.NewFileIO()
-			v = vault.NewVault(io, crypto)
 
 			// run login/setup
 			cli.Setup(v)

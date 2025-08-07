@@ -1,9 +1,12 @@
 package fileIO
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/Cyrof/govault/internal/model"
@@ -50,4 +53,48 @@ func (f *FileIO) ReadAll() ([]byte, []byte, error) {
 		return nil, nil, err
 	}
 	return vaultData, metaData, nil
+}
+
+// function to unzip and read encrypted folder
+func ReadEncryptedZip(zipPath string) (map[string][]byte, error) {
+	result := make(map[string][]byte)
+
+	r, err := zip.OpenReader(zipPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open zip file: %w", err)
+	}
+
+	var retErr error
+	defer func() {
+		if err := r.Close(); err != nil {
+			retErr = err
+		}
+	}()
+
+	for _, f := range r.File {
+		rc, err := f.Open()
+		if err != nil {
+			retErr = fmt.Errorf("failed to open zip entry %s: %w", f.Name, err)
+			break
+		}
+
+		var buf bytes.Buffer
+		if _, err := io.Copy(&buf, rc); err != nil {
+			rc.Close()
+			retErr = fmt.Errorf("failed to read zip entry %s: %w", f.Name, err)
+			break
+		}
+
+		if err := rc.Close(); err != nil {
+			retErr = fmt.Errorf("failed to close zip entry %s: %w", f.Name, err)
+			break
+		}
+
+		result[f.Name] = buf.Bytes()
+	}
+
+	if retErr != nil {
+		return nil, retErr
+	}
+	return result, nil
 }
