@@ -63,7 +63,11 @@ func Import(password string, encZip string, keyFile string, v *vault.Vault) {
 	}
 
 	// write to file
-	v.FileIO.EnsureVaultDir()
+	if err := v.FileIO.EnsureVaultDir(); err != nil {
+		cli.Error("Failed to initialise vault directory: %v\n", err)
+		logger.Logger.Panicw("Failed to initialise vault directory", "error", err)
+	}
+
 	if err := v.FileIO.WriteSecret(vaultData); err != nil {
 		cli.Error("Failed to write vault: %v", err)
 		logger.Logger.Errorw("Failed to write to vault", "error", err)

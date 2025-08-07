@@ -79,14 +79,15 @@ func ReadEncryptedZip(zipPath string) (map[string][]byte, error) {
 		}
 
 		var buf bytes.Buffer
-		if _, err := io.Copy(&buf, rc); err != nil {
-			rc.Close()
-			retErr = fmt.Errorf("failed to read zip entry %s: %w", f.Name, err)
+		_, copyErr := io.Copy(&buf, rc)
+		closeErr := rc.Close()
+
+		if copyErr != nil {
+			retErr = fmt.Errorf("failed to read zip entry %s: %w", f.Name, copyErr)
 			break
 		}
-
-		if err := rc.Close(); err != nil {
-			retErr = fmt.Errorf("failed to close zip entry %s: %w", f.Name, err)
+		if closeErr != nil {
+			retErr = fmt.Errorf("failed to close zip entry %s: %w", f.Name, closeErr)
 			break
 		}
 
