@@ -6,8 +6,17 @@ import (
 	"errors"
 )
 
-func (c *Crypto) Decrypt(ciphertext []byte) ([]byte, error) {
-	block, err := aes.NewCipher(c.Key)
+type DecryptOptions struct {
+	Key []byte
+}
+
+func (c *Crypto) Decrypt(ciphertext []byte, opt *DecryptOptions) ([]byte, error) {
+	key := c.Key
+	if opt != nil && opt.Key != nil {
+		key = opt.Key
+	}
+
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}

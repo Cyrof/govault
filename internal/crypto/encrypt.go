@@ -7,8 +7,17 @@ import (
 	"io"
 )
 
-func (c *Crypto) Encrypt(data []byte) ([]byte, error) {
-	block, err := aes.NewCipher(c.Key)
+type EncryptOptions struct {
+	Key []byte
+}
+
+func (c *Crypto) Encrypt(data []byte, opt *EncryptOptions) ([]byte, error) {
+	key := c.Key
+	if opt != nil && opt.Key != nil {
+		key = opt.Key
+	}
+
+	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
 	}
