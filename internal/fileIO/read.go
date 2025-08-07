@@ -38,3 +38,16 @@ func (f *FileIO) ReadMeta() ([]byte, []byte, error) {
 func (f *FileIO) ReadVault() ([]byte, error) {
 	return os.ReadFile(f.VaultPath)
 }
+
+// read and return raw data of both file
+func (f *FileIO) ReadAll() ([]byte, []byte, error) {
+	vaultData, err := os.ReadFile(f.VaultPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	metaData, err := os.ReadFile(f.MetaPath)
+	if err != nil {
+		return nil, nil, err
+	}
+	return vaultData, metaData, nil
+}
