@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/)
 
 ---
 
+## [v0.1.2] - 2025-08-08
+
+### Added
+- New features or enhancements
+
+### Changed
+- Refactors or behavior changes
+
+### Removed
+- Deprecated or removed features
+
 ## [v0.1.1] - 2025-07-31
 
 ### Added
