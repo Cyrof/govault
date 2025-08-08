@@ -10,13 +10,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/)
 ## [v0.1.2] - 2025-08-08
 
 ### Added
-- New features or enhancements
+
+- **Fuzzy Search**: Implemented fuzzy search in the CLI to help users find keys even if the exact name is uncertain. ([#53](https://github.com/Cyrof/govault/pull/53))
+- **Import / Export**: Added encrypted import and export functionality for vault data, allowing secure transfer between devices. ([#52](https://github.com/Cyrof/govault/pull/52))
+- **Password Generator**: Added a CLI `generate` flag to create random passwords (default: 16 characters, mixed case and numbers, optional symbols). Integrated into the `add` command via a `--gen` subflag. ([#51](https://github.com/Cyrof/govault/pull/51))
+- **Edit Feature**: Added the ability to update the password of an existing secret without recreating it. ([#49](https://github.com/Cyrof/govault/pull/49))
+- **Delete Feature**: Added a `delete` command to remove stored keys. ([#48](https://github.com/Cyrof/govault/pull/48))
 
 ### Changed
-- Refactors or behavior changes
+
+- Refactored password generation logic for integration with both the standalone `generate` command and the `add` command. ([#51](https://github.com/Cyrof/govault/pull/51))
+- Improved CLI prompts and user interaction flow for new features.
+- Minor refactoring to support new import/export and search logic. ([#52](https://github.com/Cyrof/govault/pull/52))
+
+### Fixed
+
+- Corrected flawed vault file creation logic on first run - vault is now created even if no secrets are added initially. ([#48](https://github.com/Cyrof/govault/pull/48))
+- Fixed various spelling mistakes in CLI messages.
 
 ### Removed
-- Deprecated or removed features
+
+- _No removals in this release._
 
 ## [v0.1.1] - 2025-07-31
 
