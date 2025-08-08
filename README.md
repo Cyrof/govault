@@ -1,142 +1,70 @@
 # GoVault
 
-A simple CLI-based password vault written Go. Securely stores and retrieves secrets locally using AES encryption and Argon2-based key derivation.
+A simple, secure CLI-based password vault written in Go. </br>
+GoVault stores and retrieves secrets locally using **AES-GCM** encryption and **Argon2id** key derivation
 
 ---
 
 ## Features
 
-- Secure storage using AES-GCM and Argon2id
+- Secure storage with AES-GCM and Argon2id
 - Master password verification
-- CLI interface for adding and retrieving secrets
+- CLI interface for managing secrets
+- Fuzzy search for easier key lookups
+- Import/export of encrypted vault data
+- Password generator (standalone or integrated into `add`)
 - Encrypted local file storage
 
 ---
 
 ## Prerequisites
 
-- [Go](https://go.dev) 1.20 or higher
+- [Go](https://go.dev) 1.20 or higher (if building from source)
 
 ---
 
-## Usage
+## Installation
 
-> :warning: This project is currently in development. A CI pipeline will be added later to automatically generate binaries via GitHub Actions.
-
-### Build
+Download the latest binary from the [Releases](https://github.com/Cyrof/govault/releases) page for your OS. </br>
+Or build from source:
 
 ```bash
 go build -o govault ./cmd/govault
 ```
 
-### Run
+---
 
-```bash
-go run ./cmd/govault/main.go
-```
+## Usage
 
-### First-Time Setup
-
-On first run, GoVault will:
+First-time run will:
 
 - Prompt you to set a master password
 - Generate a salt and hash for verification
-- Create an encrypted vault file (`vault.enc`) and metadata file (`meta.json`) locally
+- Create an encrypted vault file (`vault.enc`) and metadata file (`meta.json`)
 
-### Commands
+### Command Overview
 
-```bash
-./govault <command> [flags]
-```
-
-#### `add`
-
-Add a new secret (key-value pair) to the vault
+You can view all available commands and flags by running:
 
 ```bash
-./govault add -key <key> -value <value>
+govault --help
 ```
 
-- `-key`: The name/identifier of the secret
-- `-value`: The value to store securely
-
-#### `get`
-
-Retrieve a stored secret by key
+To view details for a specific command:
 
 ```bash
-./govault get -key <key>
+govault <command> --help
 ```
 
-- `-key`: The name of the secret to retrieve
-
-#### `list`
-
-List all stored keys in the vault
+Example:
 
 ```bash
-./govault list
+govault add --help
 ```
 
-- Shows all keys currently stored, but **not** their values (for security)
+### Example Screenshot
 
-#### `purge`
-
-Completely reset the vault (requires confirmation)
-
-```bash
-./govault purge
-```
-
-Add a new secret (key-value pair) to the vault
-
-```bash
-./govault add -key <key> -value <value>
-```
-
-- `-key`: The name/identifier of the secret
-- `-value`: The value to store securely
-
-#### `get`
-
-Retrieve a stored secret by key
-
-```bash
-./govault get -key <key>
-```
-
-- `-key`: The name of the secret to retrieve
-
-#### `list`
-
-List all stored keys in the vault
-
-```bash
-./govault list
-```
-
-- Shows all keys currently stored, but **not** their values (for security)
-
-#### `purge`
-
-Completely reset the vault (requires confirmation)
-
-```bash
-./govault purge
-```
-
-- Deletes both `meta.json` and `vault.enc` files
-- Prompts the user to confirm the action before proceeding
-
-#### Default
-
-If no command is passed:
-
-```bash
-./govault
-```
-
-A usage guide will be displayed.
+(_Image of govault help here_)
 
 ---
 
@@ -144,31 +72,30 @@ A usage guide will be displayed.
 
 ```java
 .
-├── CHANGELOG.md
+├── assets
 ├── cmd
 │   └── govault
-├── go.mod
-├── go.sum
 ├── internal
+│   ├── backup
 │   ├── crypto
 │   ├── fileIO
+│   ├── generator
+│   ├── logger
 │   ├── model
 │   └── vault
-├── LICENSE
-├── pkg
-│   └── cli
-└── README.md
+└── pkg
+    ├── cli
+    └── cobraCLI
 ```
 
 ---
 
 ## Future Plans
 
-- Replace flag-based CLI with [Cobra](https://github.com/spf13/cobra)
-- Add support for password hints or recovery tokens
-- Move encrypted storage to SQLite for better scalability
-- Implement GitHub Actions for linting
-- Optional: Add password strength checking and generation utilities
+- **Migrate to SQL database** for scalable storage
+  - Switch from whole vault encryption to per-row encryption
+- **Tagging system** for secrets to enable filtered listing
+- Potential future CLI enhancements
 
 ---
 
