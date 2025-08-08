@@ -68,6 +68,9 @@ jobs:
           ### Changed
           - Refactors or behavior changes
 
+          ### Fixed
+          - Bug fixes or resolved issues
+
           ### Removed
           - Deprecated or removed features
 
