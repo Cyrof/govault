@@ -16,7 +16,7 @@ func (v *Vault) Save() error {
 	}
 
 	// encrypt data
-	encData, err := v.Crypto.Encrypt(data)
+	encData, err := v.Crypto.Encrypt(data, nil)
 	if err != nil {
 		return fmt.Errorf("failed to encrypt secrets: %w", err)
 	}
@@ -37,7 +37,7 @@ func (v *Vault) Load() error {
 	}
 
 	// decrypt data
-	data, err := v.Crypto.Decrypt(encData)
+	data, err := v.Crypto.Decrypt(encData, nil)
 	if err != nil {
 		return fmt.Errorf("failed to decrypt secrets: %w", err)
 	}

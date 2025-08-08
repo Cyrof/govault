@@ -4,14 +4,12 @@ import (
 	"strings"
 )
 
-func PromptPurge() bool {
+func PromptDel() bool {
 	for {
-		Error("WARNING: This action will permanently delete all stored secrets and reset the vault.\n")
-		Error("This operation cannot be undone.\n\n")
-		Warn("Are you sure you want to continue? (yes/no): ")
+		Error("Are you sure you want to delete this secret?\n")
+		Warn("This action is irreversible and the secret cannot be recoved. (yes/no): ")
 		confirm, _ := Reader.ReadString('\n')
 
-		// format input
 		confirm = strings.TrimSpace(confirm)
 
 		if confirm == "" {
@@ -24,6 +22,5 @@ func PromptPurge() bool {
 		} else {
 			return false
 		}
-
 	}
 }
