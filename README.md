@@ -64,7 +64,7 @@ govault add --help
 
 ### Example Screenshot
 
-(_Image of govault help here_)
+![GoVault Help Screenshot](./assets/govault-help.png)
 
 ---
 
