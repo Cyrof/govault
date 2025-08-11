@@ -10,20 +10,34 @@ type FileIO struct {
 	MetaPath  string
 	VaultPath string
 	LogPath   string
+	DBPath    string
 }
 
 // constructor for fileIO
 func NewFileIO() *FileIO {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		panic("Failed to get home dir")
+	base := DataHome()
+
+	if err := os.MkdirAll(filepath.Join(base, "logs"), 0o700); err != nil {
+		panic("error creating logs")
 	}
-	vaultDir := filepath.Join(home, ".localvault")
 
 	return &FileIO{
-		VaultDir:  vaultDir,
-		MetaPath:  filepath.Join(vaultDir, "meta.json"),
-		VaultPath: filepath.Join(vaultDir, "vault.enc"),
-		LogPath:   filepath.Join(vaultDir, "logs", "govault.log"),
+		VaultDir:  base,
+		MetaPath:  filepath.Join(base, "meta.json"),
+		VaultPath: filepath.Join(base, "vault.enc"),
+		LogPath:   filepath.Join(base, "logs", "govault.log"),
+		DBPath:    filepath.Join(base, "vault.db"),
 	}
+	// home, err := os.UserHomeDir()
+	// if err != nil {
+	// 	panic("Failed to get home dir")
+	// }
+	// vaultDir := filepath.Join(home, ".localvault")
+	//
+	// return &FileIO{
+	// 	VaultDir:  vaultDir,
+	// 	MetaPath:  filepath.Join(vaultDir, "meta.json"),
+	// 	VaultPath: filepath.Join(vaultDir, "vault.enc"),
+	// 	LogPath:   filepath.Join(vaultDir, "logs", "govault.log"),
+	// }
 }
