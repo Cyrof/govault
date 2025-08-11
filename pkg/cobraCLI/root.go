@@ -38,6 +38,12 @@ var (
 				cli.Error("Failed to open database: %v", err)
 			}
 
+			// setup schema from embedded sql files
+			if err := db.SetupDatabase(dbConn); err != nil {
+				logger.Logger.Fatalw("Database setup failed", "error", err)
+				cli.Error("Database setup failed: %v", err)
+			}
+
 			v = vault.NewVault(io, crypto, dbConn)
 
 			// skip if its just the root command
