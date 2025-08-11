@@ -2,20 +2,38 @@
 package vault
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/Cyrof/govault/internal/db"
 	"github.com/Cyrof/govault/internal/model"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
 // function to add secret
-func (v *Vault) AddSecret(key, value string) {
-	s := model.Secret{
-		Key:   key,
-		Value: value,
+func (v *Vault) AddSecret(key, value string) error {
+	// s := model.Secret{
+	// 	Key:   key,
+	// 	Value: value,
+	// }
+	// v.Secrets[key] = s
+	ct, err := v.Crypto.Encrypt([]byte(value), nil)
+	if err != nil {
+		return fmt.Errorf("encrypt secret: %w", err)
 	}
-	v.Secrets[key] = s
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.InsertSecret(ctx, v.DB, key, ct); err != nil {
+		if err == db.ErrDuplicateKey {
+			return fmt.Errorf("key %q already exists", key)
+		}
+		return err
+	}
+	return nil
 }
 
 // function to get secret
