@@ -2,6 +2,7 @@ package cobraCLI
 
 import (
 	"github.com/Cyrof/govault/internal/crypto"
+	"github.com/Cyrof/govault/internal/db"
 	"github.com/Cyrof/govault/internal/fileIO"
 	"github.com/Cyrof/govault/internal/logger"
 	"github.com/Cyrof/govault/internal/vault"
@@ -29,7 +30,15 @@ var (
 			// initialise dependencies
 			crypto := crypto.NewCrypto()
 			io := fileIO.NewFileIO()
-			v = vault.NewVault(io, crypto)
+
+			// open / create sqlite db
+			dbConn, err := db.Open(io.DBPath)
+			if err != nil {
+				logger.Logger.Fatalw("Failed to open database", "path", io.DBPath, "error", err)
+				cli.Error("Failed to open database: %v", err)
+			}
+
+			v = vault.NewVault(io, crypto, dbConn)
 
 			// skip if its just the root command
 			if cmd.Parent() == nil || skipSetupCommands[cmd.Name()] {
@@ -43,6 +52,14 @@ var (
 
 			// run login/setup
 			cli.Setup(v)
+		},
+		PersistentPostRun: func(cmd *cobra.Command, args []string) {
+			if v != nil && v.DB != nil {
+				if err := v.DB.Close(); err != nil {
+					logger.Logger.Warnw("Failed to close DB", "error", err)
+					cli.Warn("Failed to close DB: %v", err)
+				}
+			}
 		},
 	}
 )

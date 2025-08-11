@@ -19,7 +19,7 @@ func Open(path string) (*sql.DB, error) {
 		`PRAGMA synchronous=NORMAL;`,
 		`PRAGMA foreign_keys=ON;`,
 		`PRAGMA busy_timeout=5000;`,
-		`PRGAMA temp_store=MEMORY;`,
+		`PRAGMA temp_store=MEMORY;`,
 	}
 	for _, p := range pragmas {
 		if _, perr := d.Exec(p); perr != nil {
