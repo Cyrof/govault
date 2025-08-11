@@ -28,16 +28,4 @@ func NewFileIO() *FileIO {
 		LogPath:   filepath.Join(base, "logs", "govault.log"),
 		DBPath:    filepath.Join(base, "vault.db"),
 	}
-	// home, err := os.UserHomeDir()
-	// if err != nil {
-	// 	panic("Failed to get home dir")
-	// }
-	// vaultDir := filepath.Join(home, ".localvault")
-	//
-	// return &FileIO{
-	// 	VaultDir:  vaultDir,
-	// 	MetaPath:  filepath.Join(vaultDir, "meta.json"),
-	// 	VaultPath: filepath.Join(vaultDir, "vault.enc"),
-	// 	LogPath:   filepath.Join(vaultDir, "logs", "govault.log"),
-	// }
 }
