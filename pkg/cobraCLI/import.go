@@ -23,7 +23,12 @@ var importCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		password, _ := cli.PromptPassword()
-		backup.Import(password, in, keyIn, v)
+		if err := backup.Import(password, in, keyIn, v); err != nil {
+			cli.Error("Import failed: %v\n", err)
+			logger.Logger.Errorw("Import failed", "error", err)
+			return
+		}
+		cli.Success("Import completed.\n")
 	},
 }
 

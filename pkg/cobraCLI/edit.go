@@ -19,7 +19,13 @@ var editCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		// check if key exist
-		if !v.CheckKey(key) {
+		exists, err := v.CheckKey(key)
+		if err != nil {
+			cli.Error("Failed to check key: %v\n", err)
+			logger.Logger.Errorw("CheckKey failed", "key", key, "error", err)
+			return
+		}
+		if !exists {
 			cli.Error("Key '%s' not found in the vault.", key)
 			logger.Logger.Warnw("Key not found", "key", key)
 			return
@@ -36,12 +42,6 @@ var editCmd = &cobra.Command{
 			cli.Error("Failed to update password: %v\n", err)
 			logger.Logger.Errorw("Failed to update password", "key", key, "error", err)
 			return
-		}
-
-		// save changes
-		if err := v.Save(); err != nil {
-			cli.Error("Error saving vault: %v\n", err)
-			logger.Logger.Errorw("Error saving vault", "error", err)
 		}
 
 		cli.Success("'%s' password successfully updated.\n", key)

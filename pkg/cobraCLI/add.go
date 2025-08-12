@@ -39,7 +39,7 @@ var addCmd = &cobra.Command{
 			}
 			secretValue = pass
 			cli.Success("Generated password: %s\n", pass)
-			logger.Logger.Infow("Password generated and added", "key", key)
+			logger.Logger.Infow("Password generated successfully", "key", key)
 		} else if value != "" {
 			secretValue = value
 			logger.Logger.Infow("Secret added manually", "key", key)
@@ -48,13 +48,15 @@ var addCmd = &cobra.Command{
 			return
 		}
 
-		v.AddSecret(key, secretValue)
+		err := v.AddSecret(key, secretValue)
+		if err != nil {
+			logger.Logger.Errorw("Error adding secret to vault", "error", err)
+			cli.Error("Error adding secret to vault: %v", err)
+			return
+		}
+
 		cli.Success("Secret added.\n")
 
-		if err := v.Save(); err != nil {
-			cli.Error("Error saving vault: %v\n", err)
-			logger.Logger.Errorw("Error saving vault", "error", err)
-		}
 	},
 }
 

@@ -18,14 +18,21 @@ var getCmd = &cobra.Command{
 	govault g -k email
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		secret, ok := v.GetSecret(key)
-		if ok {
-			fmt.Println("Value:", secret.Value)
-			logger.Logger.Debugw("Found value", "key", key)
+		secret, err := v.GetSecret(key)
+		if err != nil {
+			cli.Error("Key not found: %v", err)
+			logger.Logger.Errorw("Key not found", "error", err)
 		} else {
-			cli.Error("Key not found.")
-			logger.Logger.Error("Key not found.")
+			fmt.Println("Value:", secret)
+			logger.Logger.Infow("Key found", "key", key)
 		}
+		// if ok {
+		// 	fmt.Println("Value:", secret.Value)
+		// 	logger.Logger.Debugw("Found value", "key", key)
+		// } else {
+		// 	cli.Error("Key not found.")
+		// 	logger.Logger.Error("Key not found.")
+		// }
 	},
 }
 
