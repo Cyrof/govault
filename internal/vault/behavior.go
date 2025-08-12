@@ -14,11 +14,6 @@ import (
 
 // function to add secret
 func (v *Vault) AddSecret(key, value string) error {
-	// s := model.Secret{
-	// 	Key:   key,
-	// 	Value: value,
-	// }
-	// v.Secrets[key] = s
 	ct, err := v.Crypto.Encrypt([]byte(value), nil)
 	if err != nil {
 		return fmt.Errorf("encrypt secret: %w", err)
