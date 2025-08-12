@@ -28,23 +28,6 @@ func handleExistingUser(v *vault.Vault) {
 		logger.Logger.Fatalw("Failed to login", "error", err)
 	}
 
-	// empty, err := v.FileIO.IsEmpty()
-	// if err != nil {
-	// 	Error("Unexpected error while checking fault file.\n\n")
-	// 	logger.Logger.Fatalw("Error checking vault file", "error", err)
-	// }
-	//
-	// if empty {
-	// 	logger.Logger.Infow("Vault file not found", "path", v.FileIO.VaultPath)
-	// 	Success("Login successful.\nVault is empty.\n\n")
-	// 	return
-	// }
-	//
-	// if err := v.Load(); err != nil {
-	// 	Error("Error loading vault.\n\n")
-	// 	logger.Logger.Panicw("Error loading vault", "error", err)
-	// }
-
 	logger.Logger.Info("Login successful.")
 	Success("Login successful.\n\n")
 }
