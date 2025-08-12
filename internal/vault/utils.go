@@ -1,13 +1,22 @@
 package vault
 
-import "errors"
+import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/Cyrof/govault/internal/db"
+)
 
 // function to check if key exist
-func (v *Vault) CheckKey(key string) bool {
-	if _, exist := v.Secrets[key]; exist {
-		return true
+func (v *Vault) CheckKey(key string) (bool, error) {
+	if v.DB == nil {
+		return false, fmt.Errorf("database not initialised")
 	}
-	return false
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return db.KeyExists(ctx, v.DB, key)
 }
 
 // function to return all keys

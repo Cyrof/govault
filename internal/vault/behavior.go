@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/Cyrof/govault/internal/db"
-	"github.com/Cyrof/govault/internal/model"
 	"github.com/lithammer/fuzzysearch/fuzzy"
 )
 
@@ -102,14 +101,34 @@ func (v *Vault) DeleteSecret(key string) error {
 
 // function to updated password
 func (v *Vault) EditPassword(key string, newPass string) error {
-	if !v.CheckKey(key) {
-		return errors.New("key not found in vault")
+	if v.DB == nil {
+		return fmt.Errorf("database not initialised")
 	}
-	v.Secrets[key] = model.Secret{
-		Key:   key,
-		Value: newPass,
+
+	ct, err := v.Crypto.Encrypt([]byte(newPass), nil)
+	if err != nil {
+		return fmt.Errorf("encrypt: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// update row
+	if err := db.Update(ctx, v.DB, key, ct); err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return fmt.Errorf("key %q not found", key)
+		}
+		return err
 	}
 	return nil
+	// if !v.CheckKey(key) {
+	// 	return errors.New("key not found in vault")
+	// }
+	// v.Secrets[key] = model.Secret{
+	// 	Key:   key,
+	// 	Value: newPass,
+	// }
+	// return nil
 }
 
 // function to use fuzzy search to find key
