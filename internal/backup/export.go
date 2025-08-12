@@ -11,7 +11,6 @@ import (
 	"github.com/Cyrof/govault/internal/fileIO"
 	"github.com/Cyrof/govault/internal/logger"
 	"github.com/Cyrof/govault/internal/vault"
-	"github.com/Cyrof/govault/pkg/cli"
 )
 
 func Export(password string, v *vault.Vault, outPath string, keyOutPath string) error {
