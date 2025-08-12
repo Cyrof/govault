@@ -57,11 +57,29 @@ func (v *Vault) GetSecret(key string) (string, error) {
 }
 
 // function to display all keys
-func (v *Vault) DisplayKeys() {
-	fmt.Println("Stored keys in the vault:")
-	for key := range v.Secrets {
-		fmt.Println(" -", key)
+func (v *Vault) DisplayKeys() error {
+	if v.DB == nil {
+		return fmt.Errorf("database not initialised")
 	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	keys, err := db.ListKeys(ctx, v.DB)
+	if err != nil {
+		return err
+	}
+
+	if len(keys) == 0 {
+		fmt.Println("No keys stored yet.")
+		return nil
+	}
+
+	fmt.Println("Stored keys in the vault:")
+	for _, k := range keys {
+		fmt.Println(" -", k)
+	}
+	return nil
 }
 
 // function to delete

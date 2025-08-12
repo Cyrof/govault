@@ -1,8 +1,6 @@
 package cobraCLI
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +15,7 @@ var listCmd = &cobra.Command{
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		v.DisplayKeys()
-		os.Exit(1)
+		return
 	},
 }
 
