@@ -121,14 +121,6 @@ func (v *Vault) EditPassword(key string, newPass string) error {
 		return err
 	}
 	return nil
-	// if !v.CheckKey(key) {
-	// 	return errors.New("key not found in vault")
-	// }
-	// v.Secrets[key] = model.Secret{
-	// 	Key:   key,
-	// 	Value: newPass,
-	// }
-	// return nil
 }
 
 // function to use fuzzy search to find key
@@ -153,19 +145,4 @@ func (v *Vault) FuzzyFind(query string) error {
 		fmt.Printf("- %s\n", m)
 	}
 	return nil
-	// keys, err := v.GetKeys()
-	// if err != nil {
-	// 	return err
-	// }
-	// matches := fuzzy.Find(query, keys)
-	//
-	// if len(matches) == 0 {
-	// 	return errors.New("no matches found")
-	// }
-	//
-	// fmt.Printf("Matches for %s:\n", query)
-	// for _, match := range matches {
-	// 	fmt.Printf("- %s\n", match)
-	// }
-	// return nil
 }
