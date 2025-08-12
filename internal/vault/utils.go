@@ -2,7 +2,6 @@ package vault
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
@@ -21,14 +20,10 @@ func (v *Vault) CheckKey(key string) (bool, error) {
 
 // function to return all keys
 func (v *Vault) GetKeys() ([]string, error) {
-	keys := make([]string, 0, len(v.Secrets))
-	for key := range v.Secrets {
-		keys = append(keys, key)
+	if v.DB == nil {
+		return nil, fmt.Errorf("database not initialised")
 	}
-
-	if len(keys) > 0 {
-		return keys, nil
-	} else {
-		return nil, errors.New("no keys in vault")
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return db.ListKeys(ctx, v.DB)
 }

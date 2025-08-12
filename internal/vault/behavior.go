@@ -133,19 +133,39 @@ func (v *Vault) EditPassword(key string, newPass string) error {
 
 // function to use fuzzy search to find key
 func (v *Vault) FuzzyFind(query string) error {
+	if v.DB == nil {
+		return fmt.Errorf("database not initialised")
+	}
+
 	keys, err := v.GetKeys()
 	if err != nil {
 		return err
 	}
-	matches := fuzzy.Find(query, keys)
+
+	matches := fuzzy.FindNormalizedFold(query, keys)
 
 	if len(matches) == 0 {
 		return errors.New("no matches found")
 	}
 
-	fmt.Printf("Matches for %s:\n", query)
-	for _, match := range matches {
-		fmt.Printf("- %s\n", match)
+	fmt.Printf("Matches for %q:\n", query)
+	for _, m := range matches {
+		fmt.Printf("- %s\n", m)
 	}
 	return nil
+	// keys, err := v.GetKeys()
+	// if err != nil {
+	// 	return err
+	// }
+	// matches := fuzzy.Find(query, keys)
+	//
+	// if len(matches) == 0 {
+	// 	return errors.New("no matches found")
+	// }
+	//
+	// fmt.Printf("Matches for %s:\n", query)
+	// for _, match := range matches {
+	// 	fmt.Printf("- %s\n", match)
+	// }
+	// return nil
 }
