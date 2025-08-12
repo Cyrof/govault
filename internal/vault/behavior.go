@@ -32,9 +32,28 @@ func (v *Vault) AddSecret(key, value string) error {
 }
 
 // function to get secret
-func (v *Vault) GetSecret(key string) (model.Secret, bool) {
-	val, ok := v.Secrets[key]
-	return val, ok
+func (v *Vault) GetSecret(key string) (string, error) {
+	if v.DB == nil {
+		return "", errors.New("database not initialised")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	ct, err := db.GetSecretCT(ctx, v.DB, key)
+	if err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return "", err
+		}
+		return "", err
+	}
+
+	pt, err := v.Crypto.Decrypt(ct, nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(pt), nil
 }
 
 // function to display all keys
