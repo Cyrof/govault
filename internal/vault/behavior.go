@@ -84,10 +84,19 @@ func (v *Vault) DisplayKeys() error {
 
 // function to delete
 func (v *Vault) DeleteSecret(key string) error {
-	if !v.CheckKey(key) {
-		return errors.New("key not found in vault")
+	if v.DB == nil {
+		return fmt.Errorf("database not initialised")
 	}
-	delete(v.Secrets, key)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.Delete(ctx, v.DB, key); err != nil {
+		if errors.Is(err, db.ErrNotFound) {
+			return fmt.Errorf("key %q not found", key)
+		}
+		return err
+	}
 	return nil
 }
 
