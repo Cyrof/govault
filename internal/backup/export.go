@@ -2,6 +2,7 @@ package backup
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -13,19 +14,17 @@ import (
 	"github.com/Cyrof/govault/pkg/cli"
 )
 
-func Export(password string, v *vault.Vault, outPath string, keyOutPath string) {
+func Export(password string, v *vault.Vault, outPath string, keyOutPath string) error {
 	// generate aes to encrypt vault and meta data
 	archiveAES, err := crypto.GenerateAES()
 	if err != nil {
-		cli.Error("Failed to generate AES cipher: %v\n", err)
-		logger.Logger.Errorw("Failed to generate AES cipher", "error", err)
+		return fmt.Errorf("generate AES cipher: %w", err)
 	}
 
 	// generate new kdf to encrypt key.enc
 	newSalt, err := crypto.GenerateSalt(32)
 	if err != nil {
-		cli.Error("Failed to generate salt")
-		logger.Logger.Errorw("Failed to generate salt", "error", err)
+		return fmt.Errorf("generate salt: %w", err)
 	}
 	derivedKey := crypto.KDF(password, newSalt)
 
@@ -35,33 +34,28 @@ func Export(password string, v *vault.Vault, outPath string, keyOutPath string) 
 
 	tmpDB, err := db.Snapshot(ctx, v.DB, os.TempDir())
 	if err != nil {
-		cli.Error("Failed to snapshot database: %v\n", err)
-		logger.Logger.Errorw("snapshot db", "error", err)
+		return fmt.Errorf("snapshot database: %w", err)
 	}
 	defer os.Remove(tmpDB)
 
 	// read snapshot + meta.json
 	dbBytes, err := os.ReadFile(tmpDB)
 	if err != nil {
-		cli.Error("Failed to read DB snapshot: %v\n", err)
-		logger.Logger.Errorw("read snapshot", "error", err)
+		return fmt.Errorf("read DB snapshot: %w", err)
 	}
 	metaBytes, err := os.ReadFile(v.FileIO.MetaPath)
 	if err != nil {
-		cli.Error("Failed to read metadata: %v\n", err)
-		logger.Logger.Errorw("read meta", "error", err)
+		return fmt.Errorf("read metadata: %w", err)
 	}
 
 	// encrypt both with archiveAES
 	encDB, err := v.Crypto.Encrypt(dbBytes, &crypto.EncryptOptions{Key: archiveAES})
 	if err != nil {
-		cli.Error("Failed to encrypt DB: %v\n", err)
-		logger.Logger.Errorw("encrypt meta", "error", err)
+		return fmt.Errorf("encrypt DB: %w", err)
 	}
 	encMeta, err := v.Crypto.Encrypt(metaBytes, &crypto.EncryptOptions{Key: archiveAES})
 	if err != nil {
-		cli.Error("Failed to encrypt metadata: %v\n", err)
-		logger.Logger.Errorw("encrypt meta", "error", err)
+		return fmt.Errorf("encrypt metadata: %w", err)
 	}
 
 	// write encrypted zip
@@ -71,25 +65,21 @@ func Export(password string, v *vault.Vault, outPath string, keyOutPath string) 
 	}
 
 	if err := fileIO.WriteEncryptedZip(outPath, files); err != nil {
-		cli.Error("Failed to created zip: %v\n", err)
-		logger.Logger.Panicw("Failed to create zip", "error", err)
+		return fmt.Errorf("create encrypted zip: %w", err)
 	}
 
 	// encrypt aes key using master password and export it
 	encryptedAESKey, err := v.Crypto.Encrypt(archiveAES, &crypto.EncryptOptions{Key: derivedKey})
 	if err != nil {
-		cli.Error("Failed to encrypt data: %v\n", err)
-		logger.Logger.Errorw("Failed to encrypt data", "error", err)
+		return fmt.Errorf("encrypt AES key: %w", err)
 	}
 	keyFileContent := append(newSalt, encryptedAESKey...)
 
 	if err := fileIO.WriteKeyFile(keyFileContent, keyOutPath); err != nil {
-		cli.Error("Failed to export key file")
-		logger.Logger.Errorw("Failed to export key file", "error", err)
+		return fmt.Errorf("export key file: %w", err)
 	}
 
-	cli.Success("Vault exported successfully")
-	cli.Success("Key file exported successfully")
 	logger.Logger.Info("Vault exported successfully")
 	logger.Logger.Info("Key file exported successfully")
+	return nil
 }

@@ -39,7 +39,13 @@ var exportCmd = &cobra.Command{
 			return
 		}
 
-		backup.Export(password, v, out, keyOut)
+		// backup.Export(password, v, out, keyOut)
+		if err := backup.Export(password, v, out, keyOut); err != nil {
+			cli.Error("Export failed: %v\n", err)
+			logger.Logger.Errorw("Export failed", "error", err)
+			return
+		}
+		cli.Success("Export completed.\n")
 	},
 }
 
