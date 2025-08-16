@@ -18,12 +18,6 @@ var deleteCmd = &cobra.Command{
 	govault d -k email
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if !v.CheckKey(key) {
-			cli.Error("Key '%s' not found in the vault.", key)
-			logger.Logger.Warnw("Key not found", "key", key)
-			return
-		}
-
 		if !cli.PromptDel() {
 			fmt.Println("Deletion aborted by user.")
 			return
@@ -33,11 +27,6 @@ var deleteCmd = &cobra.Command{
 			cli.Error("Failed to delete secret: %v\n", err)
 			logger.Logger.Errorw("Failed to delete secret", "key", key, "error", err)
 			return
-		}
-
-		if err := v.Save(); err != nil {
-			cli.Error("Error saving vault: %v\n", err)
-			logger.Logger.Errorw("Error saving vault", "error", err)
 		}
 
 		cli.Success("Secret '%s' deleted successfully.\n", key)

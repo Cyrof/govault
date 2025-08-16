@@ -1,8 +1,7 @@
 package cobraCLI
 
 import (
-	"os"
-
+	"github.com/Cyrof/govault/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -16,8 +15,9 @@ var listCmd = &cobra.Command{
 	govault l
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
-		v.DisplayKeys()
-		os.Exit(1)
+		if err := v.DisplayKeys(); err != nil {
+			logger.Logger.Errorw("Error displaying Keys", "error", err)
+		}
 	},
 }
 
