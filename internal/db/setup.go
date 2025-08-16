@@ -66,7 +66,11 @@ func SetupDatabase(d *sql.DB) error {
 	sort.Strings(files)
 
 	for _, name := range files {
-		v := versionFromName(name)
+		v, err := versionFromName(name)
+		if err != nil {
+			return err
+		}
+
 		if v <= current {
 			continue
 		}
@@ -98,12 +102,14 @@ func SetupDatabase(d *sql.DB) error {
 	return nil
 }
 
-func versionFromName(name string) int {
+func versionFromName(name string) (int, error) {
 	if len(name) < 4 || name[0] < '0' || name[0] > '9' {
-		return 0
+		return 0, nil
 	}
 
 	var v int
-	fmt.Sscanf(name[:4], "%d", &v)
-	return v
+	if _, err := fmt.Sscanf(name[:4], "%d", &v); err != nil {
+		return 0, fmt.Errorf("parse %q as int: %w", name[:4], err)
+	}
+	return v, nil
 }

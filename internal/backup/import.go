@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"time"
@@ -70,7 +71,12 @@ func Import(password string, encZip string, keyFile string, v *vault.Vault) erro
 	if err := os.WriteFile(tmpDB, dbBytes, 0o600); err != nil {
 		return fmt.Errorf("write temp db: %w", err)
 	}
-	defer os.Remove(tmpDB)
+
+	defer func() {
+		if err := os.Remove(tmpDB); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			logger.Logger.Warnw("failed to remove temporary database", "path", tmpDB, "error", err)
+		}
+	}()
 
 	// merge snapshot
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
@@ -80,7 +86,12 @@ func Import(password string, encZip string, keyFile string, v *vault.Vault) erro
 	if err != nil {
 		return fmt.Errorf("get db conn: %w", err)
 	}
-	defer conn.Close()
+
+	defer func() {
+		if cerr := conn.Close(); cerr != nil {
+			logger.Logger.Warnw("failed to close DB connection", "error", cerr)
+		}
+	}()
 
 	// ensure live schema exists
 	if err := db.SetupDatabase(v.DB); err != nil {

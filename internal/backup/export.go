@@ -2,7 +2,9 @@ package backup
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"time"
 
@@ -35,7 +37,12 @@ func Export(password string, v *vault.Vault, outPath string, keyOutPath string) 
 	if err != nil {
 		return fmt.Errorf("snapshot database: %w", err)
 	}
-	defer os.Remove(tmpDB)
+
+	defer func() {
+		if err := os.Remove(tmpDB); err != nil && !errors.Is(err, fs.ErrNotExist) {
+			logger.Logger.Warnw("failed to remove temporary database", "path", tmpDB, "error", err)
+		}
+	}()
 
 	// read snapshot + meta.json
 	dbBytes, err := os.ReadFile(tmpDB)
